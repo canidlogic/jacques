@@ -43,12 +43,13 @@ relative paths to the resource over HTTP, I<excluding> the opening
 forward slash.  Property names must be a sequence of one or more
 I<components> separated by forward slashes, with an optional forward
 slash at the end of the sequence.  Components must be a sequence of one
-or more ASCII lowercase letters, digits, underscores, and periods, with
-the restriction that neither the first nor last character may be a
-period, and no period may occur immediately after another period.  HTTP
-path matching is case-insensitive.  As an exception, a forward slash by
-itself C</> is also accepted as a property name, referring to the
-resource to return when the root C</> of the HTTP server is requested.
+or more ASCII lowercase letters, digits, underscores, hyphens and
+periods, with the restriction that neither the first nor last character
+may be a period, and no period may occur immediately after another
+period.  HTTP path matching is case-insensitive.  As an exception, a
+forward slash by itself C</> is also accepted as a property name,
+referring to the resource to return when the root C</> of the HTTP
+server is requested.
 
 The values of each of these JSON properties must be arrays containing
 two strings.  The first string is the MIME type to serve to the client
@@ -161,8 +162,8 @@ sub find_resource {
     (not ($uri =~ /\.\./)) or return (0, undef, undef);
     
     # Check that only characters are ASCII alphanumeric, underscore,
-    # dot, and forward slash, and that at least one character
-    ($uri =~ /^[A-Za-z0-9_\.\/]+$/) or return (0, undef, undef);
+    # dot, hyphen, and forward slash, and that at least one character
+    ($uri =~ /^[A-Za-z0-9_\.\-\/]+$/) or return (0, undef, undef);
   }
   
   # Normalize URI to lowercase
