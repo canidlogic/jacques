@@ -28,7 +28,7 @@ The property names of the top-level JSON object are the paths on the website to 
     Property: "subdir/local.css"
     URL:      http://localhost:8080/subdir/local.css
 
-These paths are relative to the root directory, except for the special property name `/` which refers to the resource that is served when the root document of the web server is requested.  Paths must not start with a `/` (except for the special `/` path), but they may optionally end with `/`.  Path components are only allowed to use lowercase ASCII letters, digits, underscore, and dot, and dot may neither be first nor last character of the component and you can't use two or more dots in a row.  Matching to paths is case-insensitive.
+These paths are relative to the root directory, except for the special property name `/` which refers to the resource that is served when the root document of the web server is requested.  Paths must not start with a `/` (except for the special `/` path), but they may optionally end with `/`.  Path components are only allowed to use lowercase ASCII letters, digits, underscore, hyphen, and dot, and dot may neither be first nor last character of the component and you can't use two or more dots in a row.  Matching to paths is case-insensitive.
 
 The values of each property in the top-level JSON object must be arrays of exactly two strings.  The first string is the MIME type to serve in the `Content-Type` header.  The second string is the path to the resource on the local file system.  Relative paths are resolved relative to the directory that contains the JSON file.
 
