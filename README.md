@@ -10,7 +10,37 @@ In this case, `8080` is the port on `localhost` to add the server to.  You can t
 
     http://localhost:8080/
 
-This server is only intended to be used on a local machine for offline use of webapps and testing webpages locally.  It is not secured for use on networks.  As such, you may only start on local ports in range [1024, 65535].
+This server is only intended to be used on a local machine or personal LAN for offline use of webapps and testing webpages locally.  It is not secured for use on public networks.  For local use, you should only start on local ports in range [1024, 65535].
+
+You may start on ports in range [0, 1023] only if you `sudo` the script so it runs as root.  __This is dangerous.__  It means that other computers beyond just the local box can access the HTTP server, and remember that Jacques is not secured for use on public networks!  This use is valid, however, if you are only going to be serving pages on a personal LAN.  You can use `ifconfig` to figure out the IP address of the local box.  Example return of `ifconfig`:
+
+    eth0: flags=4099<UP,BROADCAST,MULTICAST>  mtu 1500
+            ether 01:23:45:67:89:ab  txqueuelen 1000  (Ethernet)
+            RX packets 0  bytes 0 (0.0 B)
+            RX errors 0  dropped 0  overruns 0  frame 0
+            TX packets 0  bytes 0 (0.0 B)
+            TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
+
+    lo: flags=73<UP,LOOPBACK,RUNNING>  mtu 65536
+            inet 127.0.0.1  netmask 255.0.0.0
+            inet6 ::1  prefixlen 128  scopeid 0x10<host>
+            loop  txqueuelen 1000  (Local Loopback)
+            RX packets 2211  bytes 9808418 (9.3 MiB)
+            RX errors 0  dropped 0  overruns 0  frame 0
+            TX packets 2211  bytes 9808418 (9.3 MiB)
+            TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
+
+    wlan0: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
+            inet 192.168.1.5  netmask 255.255.255.0  broadcast 192.168.1.255
+            ether cd:ef:01:23:45:67  txqueuelen 1000  (Ethernet)
+            RX packets 2512  bytes 1424774 (1.3 MiB)
+            RX errors 0  dropped 0  overruns 0  frame 0
+            TX packets 3130  bytes 2847507 (2.7 MiB)
+            TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
+
+The `eth0` entry refers to the Ethernet connection, which is not currently plugged in here.  The `lo` is a local loopback device.  The `wlan0` entry is the current wireless connection.  The `inet` field of `wlan0` is `192.168.1.5` which means that you can connect to this computer from other computers on the LAN at that address.  If you run `sudo jcqhttp.pl` on port `80` (the default HTTP port) on this machine, you can access the HTTP server on `http://192.168.1.5/` from other machines on the LAN.  If you already have an HTTP server running on that port, you may need to use a different port, in which case you would visit the site like `http://192.168.1.5:85/` on port 85, for example.  Only ports below 1024 will be accessible from other machines on the network.
+
+Jacques will print a warning if you pass a port number below 1024.  The server will fail to start unless you are running it on root with `sudo`.
 
 The other parameter is the path to a JSON file that describes the website the server should serve.  An example JSON file looks like this:
 
