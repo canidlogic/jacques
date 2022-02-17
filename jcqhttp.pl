@@ -29,12 +29,14 @@ jcqhttp.pl - Simple local HTTP server
 =head1 DESCRIPTION
 
 Runs an HTTP server on a local port so that a simple website can be run
-over HTTP on the local machine.  Intended for static websites, or for
-JavaScript webapps that exclusively use client-side scripting.  Jacques
-does not have any server-side scripting support.
+over HTTP on the local machine or a personal LAN.  Intended for static
+websites, or for JavaScript webapps that exclusively use client-side
+scripting.  Jacques does not have any server-side scripting support.
 
 The first argument to the script must be a port number to set the HTTP
-server up on localhost.  It must be in range [1024, 65535].
+server up on localhost.  It must be in range [0, 65535].  If it is less
+than 1024, Jacques will print a warning message.  Note that Jacques can
+only bind to ports less than 1024 if running as root.
 
 The second argument to the script is a JSON file that specifies the
 website to serve.  This JSON file must be structured so that at the top
@@ -446,8 +448,22 @@ my $arg_port  = shift(@ARGV);
 
 $arg_port = int($arg_port);
 
-(($arg_port >= 1024) and ($arg_port <= 65535)) or
-  die "Port number must be in range [1024, 65535], stopped";
+(($arg_port >= 0) and ($arg_port <= 65535)) or
+  die "Port number must be in range [0, 65535], stopped";
+
+# Print warning if binding to a public port
+#
+if ($arg_port < 1024) {
+  print "             *******************\n";
+  print "             * !!! WARNING !!! *\n";
+  print "             *******************\n";
+  print "\n";
+  print "You are starting Jacques on a port below 1024.\n";
+  print "JACQUES IS NOT SAFE FOR USE ON PUBLIC NETWORKS!\n";
+  print "You must run Jacques as root for this to work.\n";
+  print "See README.md for further information.\n";
+  print "\n";
+}
 
 # Convert the JSON path to an absolute path if necessary
 #
@@ -456,6 +472,13 @@ $json_path = File::Spec->rel2abs($json_path);
 # Get the effective user ID of this process
 #
 my $user_id = $>;
+
+# If port is less than 1024, check that we are running as root
+#
+if ($arg_port < 1024) {
+  ($user_id == 0) or
+    die "You must run Jacques as root if port is less than 1024!\n";
+}
 
 # Get the effective group ID of this process; if there are multiple
 # groups, choose the first one, which is the effective group ID
